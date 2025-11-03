@@ -1,5 +1,6 @@
 package finance_flow.Finance_Flow.repository;
 
+import finance_flow.Finance_Flow.model.Category;
 import finance_flow.Finance_Flow.model.Transaction;
 import finance_flow.Finance_Flow.model.User;
 import finance_flow.Finance_Flow.model.enums.TransactionType;
@@ -18,12 +19,10 @@ import java.util.Optional;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    // Podstawowe query methods
     List<Transaction> findByUserId(Long userId);
     Optional<Transaction> findByIdAndUser(Long id, User user);
     List<Transaction> findByUserAndType(User user, TransactionType type);
 
-    // Query z filtrowaniem i paginacją
     @Query("SELECT t FROM Transaction t WHERE t.user = :user " +
             "AND (:categoryId IS NULL OR t.category.id = :categoryId) " +
             "AND (:type IS NULL OR t.type = :type) " +
@@ -39,7 +38,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             Pageable pageable
     );
 
-    // Suma transakcji według typu
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
             "WHERE t.user.id = :userId AND t.type = :type " +
             "AND t.transactionDate BETWEEN :startDate AND :endDate")
@@ -57,12 +55,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     BigDecimal sumByCategoryAndTypeAndDateRange(Long id, TransactionType transactionType, LocalDate startOfMonth, LocalDate endOfMonth);
 
 
-    // Ostatnie N transakcji
     @Query("SELECT t FROM Transaction t WHERE t.user = :user " +
             "ORDER BY t.transactionDate DESC, t.createdAt DESC")
     List<Transaction> findRecentTransactions(@Param("user") User user, Pageable pageable);
 
-    // Analityka - wydatki według kategorii
     @Query("SELECT t.category.name, SUM(t.amount) " +
             "FROM Transaction t " +
             "WHERE t.user.id = :userId AND t.type = 'EXPENSE' " +
@@ -74,7 +70,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("endDate") LocalDate endDate
     );
 
-    // Usuwanie starszych niż określona data
     void deleteByUserAndTransactionDateBefore(User user, LocalDate date);
+    Page<Transaction> findAllByUser(User currentUser, Pageable pageable);
 
+    List<Transaction> findByDateToDate(User user, LocalDate startDate, LocalDate endDate);
+
+    List<Transaction> findByUserAndCategory(User currentUser, Category category);
 }

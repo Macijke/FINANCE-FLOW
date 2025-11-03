@@ -22,6 +22,7 @@ public class TransactionResponse {
     private BigDecimal amount;
     private TransactionType type;
     private String description;
+    private Long categoryId;
     private LocalDate transactionDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

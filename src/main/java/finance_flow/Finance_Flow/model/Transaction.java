@@ -2,9 +2,7 @@ package finance_flow.Finance_Flow.model;
 
 import finance_flow.Finance_Flow.model.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +12,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name="transactions", indexes = {
         @Index(name = "idx_user_date", columnList = "user_id, transaction_date"),
         @Index(name = "idx_category", columnList = "category_id")})
