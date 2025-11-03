@@ -73,7 +73,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     void deleteByUserAndTransactionDateBefore(User user, LocalDate date);
     Page<Transaction> findAllByUser(User currentUser, Pageable pageable);
 
-    List<Transaction> findByDateToDate(User user, LocalDate startDate, LocalDate endDate);
+    List<Transaction> findByUserAndTransactionDateBetween(User user, LocalDate startDate, LocalDate endDate);
 
     List<Transaction> findByUserAndCategory(User currentUser, Category category);
 }

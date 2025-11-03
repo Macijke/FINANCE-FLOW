@@ -130,7 +130,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) {
         User currentUser = SecurityUtils.getCurrentUser();
-        List<Transaction> transactions = transactionRepository.findByDateToDate(currentUser, startDate, endDate);
+        List<Transaction> transactions = transactionRepository.findByUserAndTransactionDateBetween(currentUser, startDate, endDate);
 
         return transactions.stream()
                 .map(this::mapToResponse)
