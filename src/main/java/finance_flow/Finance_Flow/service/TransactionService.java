@@ -1,7 +1,7 @@
 package finance_flow.Finance_Flow.service;
 
 import finance_flow.Finance_Flow.dto.request.TransactionRequest;
-import finance_flow.Finance_Flow.dto.request.response.TransactionResponse;
+import finance_flow.Finance_Flow.dto.response.TransactionResponse;
 import finance_flow.Finance_Flow.model.enums.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface TransactionService {
     TransactionResponse createTransaction(TransactionRequest request);
+
     TransactionResponse updateTransaction(Long id, TransactionRequest request);
 
     void deleteTransaction(Long id);

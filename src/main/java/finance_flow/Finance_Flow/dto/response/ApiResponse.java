@@ -1,4 +1,4 @@
-package finance_flow.Finance_Flow.dto.request.response;
+package finance_flow.Finance_Flow.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

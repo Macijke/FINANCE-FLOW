@@ -1,8 +1,8 @@
 package finance_flow.Finance_Flow.controller;
 
 import finance_flow.Finance_Flow.dto.request.TransactionRequest;
-import finance_flow.Finance_Flow.dto.request.response.ApiResponse;
-import finance_flow.Finance_Flow.dto.request.response.TransactionResponse;
+import finance_flow.Finance_Flow.dto.response.ApiResponse;
+import finance_flow.Finance_Flow.dto.response.TransactionResponse;
 import finance_flow.Finance_Flow.model.enums.TransactionType;
 import finance_flow.Finance_Flow.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;

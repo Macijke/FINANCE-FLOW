@@ -50,6 +50,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("endDate") LocalDate endDate
     );
 
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.category.id = :id " +
+            "AND t.type = :transactionType " +
+            "AND t.transactionDate BETWEEN :startOfMonth AND :endOfMonth")
+    BigDecimal sumByCategoryAndTypeAndDateRange(Long id, TransactionType transactionType, LocalDate startOfMonth, LocalDate endOfMonth);
+
+
     // Ostatnie N transakcji
     @Query("SELECT t FROM Transaction t WHERE t.user = :user " +
             "ORDER BY t.transactionDate DESC, t.createdAt DESC")
@@ -69,4 +76,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     // Usuwanie starszych niż określona data
     void deleteByUserAndTransactionDateBefore(User user, LocalDate date);
+
 }

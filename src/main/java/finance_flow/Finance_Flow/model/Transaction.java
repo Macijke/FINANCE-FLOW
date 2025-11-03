@@ -2,6 +2,8 @@ package finance_flow.Finance_Flow.model;
 
 import finance_flow.Finance_Flow.model.enums.TransactionType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,11 +27,15 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
+    @Getter
+    @Setter
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @ToString.Exclude
+    @Getter
+    @Setter
     private Category category;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -52,4 +58,5 @@ public class Transaction {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
 }

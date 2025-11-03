@@ -1,6 +1,7 @@
 package finance_flow.Finance_Flow.util;
 
-import com.sun.security.auth.UserPrincipal;
+import finance_flow.Finance_Flow.security.UserPrincipal;
+import finance_flow.Finance_Flow.exception.UnauthorizedException;
 import finance_flow.Finance_Flow.model.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
