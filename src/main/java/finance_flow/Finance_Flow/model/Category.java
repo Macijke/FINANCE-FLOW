@@ -70,7 +70,6 @@ public class Category {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Relacje
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @ToString.Exclude
     @Builder.Default
@@ -81,7 +80,6 @@ public class Category {
     @Builder.Default
     private List<Budget> budgets = new ArrayList<>();
 
-    // Helper methods
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
         transaction.setCategory(this);
