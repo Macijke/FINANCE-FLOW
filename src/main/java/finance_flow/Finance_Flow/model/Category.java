@@ -33,21 +33,21 @@ public class Category {
     @ToString.Exclude
     private User user;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, name = "name")
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 10, name = "type")
     private TransactionType type;
 
-    @Column(length = 7)
+        @Column(length = 7, name = "color")
     @Builder.Default
     private String color = "#5B7FFF";
 
-    @Column(length = 50)
+    @Column(length = 50, name = "icon")
     private String icon;
 
-    @Column(length = 255)
+    @Column(length = 255, name = "description")
     private String description;
 
     @Column(name = "is_default")

@@ -40,14 +40,14 @@ public class Transaction {
     @Setter
     private Category category;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2, name = "amount")
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private TransactionType type; // INCOME or EXPENSE
+    @Column(nullable = false, length = 10, name = "type")
+    private TransactionType type;
 
-    @Column(length = 255)
+    @Column(length = 255, name = "description")
     private String description;
 
     @Column(name = "transaction_date", nullable = false)

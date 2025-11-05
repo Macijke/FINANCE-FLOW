@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "budget", uniqueConstraints = {
+@Table(name = "budgets", uniqueConstraints = {
         @UniqueConstraint(
                 name = "uk_user_category_month",
                 columnNames = {"user_id", "category_id", "month"}

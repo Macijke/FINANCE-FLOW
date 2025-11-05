@@ -31,7 +31,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true, length = 255, name = "email")
     private String email;
 
     @Column(name = "password_hash", nullable = false, length = 255)
@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private String defaultCurrency = "USD";
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, name = "role")
     @Builder.Default
     private Role role = Role.USER;
 
@@ -75,7 +75,6 @@ public class User implements UserDetails {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    // Relacje
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @Builder.Default
@@ -96,7 +95,6 @@ public class User implements UserDetails {
     @Builder.Default
     private List<SavingsGoal> savingsGoals = new ArrayList<>();
 
-    // UserDetails interface implementation (dla Spring Security)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(
