@@ -23,6 +23,7 @@ public class TransactionResponse {
     private TransactionType type;
     private String description;
     private Long categoryId;
+    private String categoryIcon;
     private LocalDate transactionDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

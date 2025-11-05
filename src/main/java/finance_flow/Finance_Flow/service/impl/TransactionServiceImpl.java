@@ -165,6 +165,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .transactionDate(transaction.getTransactionDate())
                 .categoryId(transaction.getCategory() != null ? transaction.getCategory().getId() : null)
                 .categoryName(transaction.getCategory() != null ? transaction.getCategory().getName() : null)
+                .categoryIcon(transaction.getCategory().getIcon() != null ? transaction.getCategory().getIcon() : null)
                 .categoryColor(transaction.getCategory() != null ? transaction.getCategory().getColor() : null)
                 .createdAt(transaction.getCreatedAt())
                 .updatedAt(transaction.getUpdatedAt())
