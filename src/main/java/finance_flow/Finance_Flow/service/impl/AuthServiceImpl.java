@@ -32,18 +32,15 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            log.error("Invalid password for email {}", request.getEmail());
             throw new UnauthorizedException("Invalid email or password");
         }
 
         if (!user.getIsActive()) {
-            log.warn("Login failed: Account disabled - {}", request.getEmail());
             throw new UnauthorizedException("Account is disabled");
         }
 
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         String token = jwtTokenProvider.generateToken(userPrincipal);
-        log.info("User logged in successfully: {}", user.getEmail());
         return buildAuthResponse(user, token);
     }
 
