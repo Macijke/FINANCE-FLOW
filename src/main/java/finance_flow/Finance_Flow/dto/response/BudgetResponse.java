@@ -17,6 +17,7 @@ public class BudgetResponse {
     private Long id;
     private String categoryName;
     private String categoryColor;
+    private String categoryIcon;
     private BigDecimal limitAmount;
     private LocalDate month;
     private Boolean alertEnabled;

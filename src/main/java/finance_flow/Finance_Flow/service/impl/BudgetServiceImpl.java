@@ -74,14 +74,11 @@ public class BudgetServiceImpl implements BudgetService {
         log.info("Updating budget with id: {}", id);
 
         User currentUser = SecurityUtils.getCurrentUser();
-
-        // ZMIANA: findByIdAndUser zamiast findById
         Budget budget = budgetRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget not found"));
 
         Category category = null;
         if (request.getCategoryId() != null) {
-            // ZMIANA: findByIdAndUser zamiast findById
             category = categoryRepository.findByIdAndUser(request.getCategoryId(), currentUser)
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         }
@@ -195,6 +192,7 @@ public class BudgetServiceImpl implements BudgetService {
                 .categoryColor(budget.getCategory() != null
                         ? budget.getCategory().getColor()
                         : "#6B7280")
+                .categoryIcon(budget.getCategory().getIcon())
                 .limitAmount(budget.getLimitAmount())
                 .month(budget.getMonth())
                 .alertEnabled(budget.getAlertEnabled())

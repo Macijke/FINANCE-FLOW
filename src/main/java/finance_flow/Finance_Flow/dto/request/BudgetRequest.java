@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class BudgetRequest {
+
     private Long categoryId;
 
     @NotNull
@@ -28,5 +29,4 @@ public class BudgetRequest {
 
     @Builder.Default
     private Boolean alertEnabled = true;
-
 }
