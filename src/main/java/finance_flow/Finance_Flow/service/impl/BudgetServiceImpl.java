@@ -186,6 +186,7 @@ public class BudgetServiceImpl implements BudgetService {
 
         return BudgetResponse.builder()
                 .id(budget.getId())
+                .categoryId(budget.getCategory().getId())
                 .categoryName(budget.getCategory() != null
                         ? budget.getCategory().getName()
                         : "Global Budget")

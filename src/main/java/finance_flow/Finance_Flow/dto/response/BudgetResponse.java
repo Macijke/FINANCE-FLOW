@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BudgetResponse {
     private Long id;
+    private Long categoryId;
     private String categoryName;
     private String categoryColor;
     private String categoryIcon;
