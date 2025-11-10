@@ -13,9 +13,11 @@ import finance_flow.Finance_Flow.security.UserPrincipal;
 import finance_flow.Finance_Flow.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
@@ -41,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
 
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         String token = jwtTokenProvider.generateToken(userPrincipal);
+
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+
         return buildAuthResponse(user, token);
     }
 
@@ -63,10 +69,10 @@ public class AuthServiceImpl implements AuthService {
                 .emailVerified(false)
                 .build();
         User savedUser = userRepository.save(user);
-        log.info("User registered successfully: {}", user.getEmail());
+        log.info("User registered successfully: {}", savedUser.getEmail());
         UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
         String token = jwtTokenProvider.generateToken(userPrincipal);
-        return buildAuthResponse(user, token);
+        return buildAuthResponse(savedUser, token);
     }
 
 
