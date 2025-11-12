@@ -20,7 +20,9 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByUserId(Long userId);
+
     Optional<Transaction> findByIdAndUser(Long id, User user);
+
     List<Transaction> findByUserAndType(User user, TransactionType type);
 
     @Query("SELECT t FROM Transaction t WHERE t.user = :user " +
@@ -71,9 +73,56 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     );
 
     void deleteByUserAndTransactionDateBefore(User user, LocalDate date);
+
     Page<Transaction> findAllByUser(User currentUser, Pageable pageable);
 
     List<Transaction> findByUserAndTransactionDateBetween(User user, LocalDate startDate, LocalDate endDate);
 
     List<Transaction> findByUserAndCategory(User currentUser, Category category);
+
+    @Query("SELECT t.category.id, COALESCE(SUM(t.amount), 0) " +
+            "FROM Transaction t " +
+            "WHERE t.user.id = :userId " +
+            "AND t.type = :type " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY t.category.id")
+    List<Object[]> sumByCategoryAndDateRange(
+            @Param("userId") Long userId,
+            @Param("type") TransactionType type,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT FUNCTION('TO_CHAR', t.transactionDate, 'YYYY-MM'), " +
+            "t.type, COALESCE(SUM(t.amount), 0) " +
+            "FROM Transaction t " +
+            "WHERE t.user.id = :userId " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY FUNCTION('TO_CHAR', t.transactionDate, 'YYYY-MM'), t.type " +
+            "ORDER BY FUNCTION('TO_CHAR', t.transactionDate, 'YYYY-MM')")
+    List<Object[]> getMonthlyTrends(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT COUNT(t) FROM Transaction t " +
+            "WHERE t.user.id = :userId " +
+            "AND t.category.id = :categoryId " +
+            "AND t.type = :type " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate")
+    Long countByCategoryAndTypeAndDateRange(
+            @Param("userId") Long userId,
+            @Param("categoryId") Long categoryId,
+            @Param("type") TransactionType type,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount " +
+            "WHEN t.type = 'EXPENSE' THEN -t.amount ELSE 0 END), 0) " +
+            "FROM Transaction t " +
+            "WHERE t.user = :user")
+    BigDecimal calculateTotalBalance(User user);
+
 }
