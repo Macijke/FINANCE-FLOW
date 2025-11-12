@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
         );
         if (exists) {
             log.warn("Category with name '{}' and type '{}' already exists for user '{}'",
-                    request.getName(), request.getType(), currentUser.getUsername());
+                    request.getName(), request.getType(), currentUser.getEmail());
             throw new BadRequestException("Category with the same name and type already exists.");
         }
 

@@ -8,6 +8,7 @@ import finance_flow.Finance_Flow.model.enums.TransactionType;
 import finance_flow.Finance_Flow.repository.BudgetRepository;
 import finance_flow.Finance_Flow.repository.CategoryRepository;
 import finance_flow.Finance_Flow.repository.TransactionRepository;
+import finance_flow.Finance_Flow.service.AnalyticsService;
 import finance_flow.Finance_Flow.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AnalyticsServiceImpl {
+public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final TransactionRepository transactionRepository;
     private final BudgetRepository budgetRepository;
     private final CategoryRepository categoryRepository;
 
+    @Override
     public AnalyticsResponse getAnalytics(LocalDate startDate,
                                           LocalDate endDate) {
 
@@ -41,8 +43,9 @@ public class AnalyticsServiceImpl {
                 .build();
     }
 
-    private AnalyticsResponse.FinancialSummary buildFinancialSummary(LocalDate startDate,
-                                                                     LocalDate endDate) {
+    @Override
+    public AnalyticsResponse.FinancialSummary buildFinancialSummary(LocalDate startDate,
+                                                                    LocalDate endDate) {
         User currentUser = SecurityUtils.getCurrentUser();
         Long userId = currentUser.getId();
 
@@ -72,7 +75,8 @@ public class AnalyticsServiceImpl {
                 .build();
     }
 
-    private List<AnalyticsResponse.CategoryBreakdown> buildCategoryBreakdowns(
+    @Override
+    public List<AnalyticsResponse.CategoryBreakdown> buildCategoryBreakdowns(
             LocalDate startDate,
             LocalDate endDate) {
         Long userId = SecurityUtils.getCurrentUserId();
@@ -113,7 +117,8 @@ public class AnalyticsServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private List<AnalyticsResponse.MonthlyTrend> buildMonthlyTrends(
+    @Override
+    public List<AnalyticsResponse.MonthlyTrend> buildMonthlyTrends(
             LocalDate startDate,
             LocalDate endDate) {
         Long userId = SecurityUtils.getCurrentUserId();
@@ -150,7 +155,8 @@ public class AnalyticsServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private AnalyticsResponse.BudgetOverview buildBudgetOverview(LocalDate month) {
+    @Override
+    public AnalyticsResponse.BudgetOverview buildBudgetOverview(LocalDate month) {
         User currentUser = SecurityUtils.getCurrentUser();
         List<Budget> budgets = budgetRepository.findActiveBudgetsForMonth(currentUser, month);
 

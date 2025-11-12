@@ -29,7 +29,7 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     long countByUser(User user);
 
-    @Query("SELECT b FROM Budget b WHERE b.month = :month")
+    @Query("SELECT b FROM Budget b WHERE b.month = :month AND b.user = :user")
     List<Budget> findActiveBudgetsForMonth(User user, LocalDate month);
 
 }

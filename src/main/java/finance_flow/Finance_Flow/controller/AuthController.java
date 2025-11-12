@@ -1,5 +1,6 @@
 package finance_flow.Finance_Flow.controller;
 
+import finance_flow.Finance_Flow.dto.request.ChangePasswordRequest;
 import finance_flow.Finance_Flow.dto.request.LoginRequest;
 import finance_flow.Finance_Flow.dto.request.RegisterRequest;
 import finance_flow.Finance_Flow.dto.response.ApiResponse;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,5 +49,18 @@ public class AuthController {
                         .data(authResponse)
                         .build()
         );
+    }
+
+    @PostMapping("/change-password")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+
+        authService.changePassword(request);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .success(true)
+                .message("Password changed successfully")
+                .build());
     }
 }

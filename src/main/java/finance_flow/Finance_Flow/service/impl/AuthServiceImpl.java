@@ -1,9 +1,11 @@
 package finance_flow.Finance_Flow.service.impl;
 
+import finance_flow.Finance_Flow.dto.request.ChangePasswordRequest;
 import finance_flow.Finance_Flow.dto.request.LoginRequest;
 import finance_flow.Finance_Flow.dto.request.RegisterRequest;
 import finance_flow.Finance_Flow.dto.response.AuthResponse;
 import finance_flow.Finance_Flow.exception.BadRequestException;
+import finance_flow.Finance_Flow.exception.ResourceNotFoundException;
 import finance_flow.Finance_Flow.exception.UnauthorizedException;
 import finance_flow.Finance_Flow.model.User;
 import finance_flow.Finance_Flow.model.enums.Role;
@@ -11,6 +13,7 @@ import finance_flow.Finance_Flow.repository.UserRepository;
 import finance_flow.Finance_Flow.security.JwtTokenProvider;
 import finance_flow.Finance_Flow.security.UserPrincipal;
 import finance_flow.Finance_Flow.service.AuthService;
+import finance_flow.Finance_Flow.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,6 +76,21 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
         String token = jwtTokenProvider.generateToken(userPrincipal);
         return buildAuthResponse(savedUser, token);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordRequest request) {
+        User currentUser = SecurityUtils.getCurrentUser();
+        User user = userRepository.findById(Math.toIntExact(currentUser.getId()))
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
 
