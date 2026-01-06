@@ -3,6 +3,8 @@ package finance_flow.Finance_Flow.config;
 import finance_flow.Finance_Flow.security.CustomUserDetailsService;
 import finance_flow.Finance_Flow.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,11 +33,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
         jsr250Enabled = true
 )
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final PasswordEncoder passwordEncoder;
+    @Value("${management.endpoints.web.cors.allowed-origins}")
+    private final String[] CORS_ALLOWED_ORIGINS;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -75,7 +80,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://financeflowm.vercel.app"));
+        configuration.setAllowedOrigins(List.of(CORS_ALLOWED_ORIGINS));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
