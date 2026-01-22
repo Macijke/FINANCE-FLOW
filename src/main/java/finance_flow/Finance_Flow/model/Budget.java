@@ -1,6 +1,8 @@
 package finance_flow.Finance_Flow.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,7 +13,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,9 +25,10 @@ import java.time.LocalDateTime;
                 columnNames = {"user_id", "category_id", "month"}
         )},
         indexes = {
-        @Index(name = "idx_user_month", columnList = "user_id, month"),
+                @Index(name = "idx_user_month", columnList = "user_id, month"),
 
-})
+        })
+
 public class Budget {
 
     @Id
@@ -34,6 +38,7 @@ public class Budget {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
+    @NotNull
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,9 +48,12 @@ public class Budget {
 
     @Column(name = "limit_amount", nullable = false, precision = 10, scale = 2)
     @Builder.Default
+    @NotNull
+    @PositiveOrZero
     private BigDecimal limitAmount = BigDecimal.ZERO;
 
     @Column(name = "month", nullable = false)
+    @NotNull
     private LocalDate month;
 
     @Column(name = "alert_enabled")
@@ -59,4 +67,16 @@ public class Budget {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Budget budget)) return false;
+        return id != null && id.equals(budget.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

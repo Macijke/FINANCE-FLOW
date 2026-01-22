@@ -2,6 +2,8 @@ package finance_flow.Finance_Flow.model;
 
 import finance_flow.Finance_Flow.model.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,7 +18,8 @@ import java.util.List;
         @UniqueConstraint(columnNames = "email")
 })
 @EntityListeners(AuditingEntityListener.class)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,21 +29,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 255, name = "email")
+    @Column(nullable = false, unique = true, name = "email")
+    @Size(max = 255)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = false)
+    @Size(max = 255)
     @ToString.Exclude
     private String password;
 
     @Column(name = "first_name", length = 100)
+    @Size(max = 100)
     private String firstName;
 
     @Column(name = "last_name", length = 100)
+    @Size(max = 100)
     private String lastName;
 
     @Column(name = "default_currency", length = 3)
     @Builder.Default
+    @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be a valid ISO 4217 code")
     private String defaultCurrency = "USD";
 
     @Enumerated(EnumType.STRING)
@@ -90,4 +98,15 @@ public class User {
     @Builder.Default
     private List<SavingsGoal> savingsGoals = new ArrayList<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return id != null && id.equals(user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
