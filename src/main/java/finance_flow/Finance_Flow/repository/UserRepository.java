@@ -15,19 +15,13 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
-    Optional<User> findByEmailAndIsActiveTrue(String email);
-    Optional<User> findByEmailAndEmailVerifiedTrue(String email);
+    Optional<User> findById(Long id);
 
     @Modifying
     @Query("UPDATE User u SET u.lastLogin = :lastLogin WHERE u.id = :userId")
     void updateLastLogin(@Param("userId") Long userId, @Param("lastLogin") LocalDateTime lastLogin);
 
-    @Query("SELECT u FROM User u WHERE u.createdAt BETWEEN :startDate AND :endDate")
-    List<User> findUsersRegisteredBetween(
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
-    );
-
-    long countByIsActiveTrue();
-
+    @Modifying
+    @Query("UPDATE User u SET u.updatedAt = :lastModified WHERE u.id = :userId")
+    void updateLastModified(@Param("userId") Long userId, @Param("lastModified") LocalDateTime lastModified);
 }

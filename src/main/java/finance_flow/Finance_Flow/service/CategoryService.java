@@ -3,6 +3,7 @@ package finance_flow.Finance_Flow.service;
 import finance_flow.Finance_Flow.dto.request.CategoryRequest;
 import finance_flow.Finance_Flow.dto.response.CategoryResponse;
 import finance_flow.Finance_Flow.model.enums.TransactionType;
+import finance_flow.Finance_Flow.security.UserPrincipal;
 
 import java.util.List;
 
@@ -19,6 +20,6 @@ public interface CategoryService {
 
     List<CategoryResponse> getCategoriesByType(TransactionType type);
 
-    void initializeDefaultCategories();
+    void initializeDefaultCategories(UserPrincipal userPrincipal);
 
 }

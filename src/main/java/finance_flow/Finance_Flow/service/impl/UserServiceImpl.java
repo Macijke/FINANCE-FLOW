@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setProfilePictureUrl(profilePictureUrl);
+        user.setUpdatedAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
 
         return mapToUserResponse(updatedUser);

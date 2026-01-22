@@ -46,7 +46,6 @@ public class Category {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10, name = "type")
     @NotNull
-    @Size(max = 10)
     private TransactionType type;
 
     @Column(length = 7, name = "color")
@@ -89,26 +88,6 @@ public class Category {
     @ToString.Exclude
     @Builder.Default
     private List<Budget> budgets = new ArrayList<>();
-
-    public void addTransaction(Transaction transaction) {
-        transactions.add(transaction);
-        transaction.setCategory(this);
-    }
-
-    public void removeTransaction(Transaction transaction) {
-        transactions.remove(transaction);
-        transaction.setCategory(null);
-    }
-
-    public void addBudget(Budget budget) {
-        budgets.add(budget);
-        budget.setCategory(this);
-    }
-
-    public void removeBudget(Budget budget) {
-        budgets.remove(budget);
-        budget.setCategory(null);
-    }
 
     @Override
     public boolean equals(Object o) {

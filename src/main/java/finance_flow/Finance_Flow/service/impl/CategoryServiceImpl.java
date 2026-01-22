@@ -8,6 +8,7 @@ import finance_flow.Finance_Flow.model.Category;
 import finance_flow.Finance_Flow.model.User;
 import finance_flow.Finance_Flow.model.enums.TransactionType;
 import finance_flow.Finance_Flow.repository.CategoryRepository;
+import finance_flow.Finance_Flow.security.UserPrincipal;
 import finance_flow.Finance_Flow.service.CategoryService;
 import finance_flow.Finance_Flow.util.DefaultCategoriesGenerator;
 import finance_flow.Finance_Flow.util.SecurityUtils;
@@ -130,8 +131,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void initializeDefaultCategories() {
-        User currentUser = SecurityUtils.getCurrentUser();
+    public void initializeDefaultCategories(UserPrincipal userPrincipal) {
+        User currentUser = userPrincipal.getUser();
 
         if (categoryRepository.countByUser(currentUser) > 0) {
             log.debug("Categories already initialized for user {}", currentUser.getId());

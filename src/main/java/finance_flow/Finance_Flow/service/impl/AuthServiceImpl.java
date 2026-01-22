@@ -13,6 +13,7 @@ import finance_flow.Finance_Flow.repository.UserRepository;
 import finance_flow.Finance_Flow.security.JwtTokenProvider;
 import finance_flow.Finance_Flow.security.UserPrincipal;
 import finance_flow.Finance_Flow.service.AuthService;
+import finance_flow.Finance_Flow.service.CategoryService;
 import finance_flow.Finance_Flow.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CategoryService categoryService;
 
     @Override
     @Transactional
@@ -47,9 +49,8 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         String token = jwtTokenProvider.generateToken(userPrincipal);
 
-        user.setLastLogin(LocalDateTime.now());
-        userRepository.save(user);
-
+        userRepository.updateLastLogin(user.getId(), LocalDateTime.now());
+        log.info("User logged in successfully: {}", user.getEmail());
         return buildAuthResponse(user, token);
     }
 
@@ -72,9 +73,10 @@ public class AuthServiceImpl implements AuthService {
                 .emailVerified(false)
                 .build();
         User savedUser = userRepository.save(user);
-        log.info("User registered successfully: {}", savedUser.getEmail());
         UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
         String token = jwtTokenProvider.generateToken(userPrincipal);
+        categoryService.initializeDefaultCategories(userPrincipal);
+        log.info("User registered successfully: {}", savedUser.getEmail());
         return buildAuthResponse(savedUser, token);
     }
 
@@ -82,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void changePassword(ChangePasswordRequest request) {
         User currentUser = SecurityUtils.getCurrentUser();
-        User user = userRepository.findById(Math.toIntExact(currentUser.getId()))
+        User user = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
@@ -90,6 +92,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
 
