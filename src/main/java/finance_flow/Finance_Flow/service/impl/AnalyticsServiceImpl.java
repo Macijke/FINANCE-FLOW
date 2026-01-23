@@ -55,6 +55,18 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         BigDecimal totalExpenses = transactionRepository.sumByUserAndTypeAndDateRange(
                 userId, TransactionType.EXPENSE, startDate, endDate);
 
+        Integer countExpensesTransactions = transactionRepository.countByUserAndTypeAndTransactionDateBetween(
+                currentUser, TransactionType.EXPENSE, startDate, endDate);
+
+        Integer countIncomeTransactions = transactionRepository.countByUserAndTypeAndTransactionDateBetween(
+                currentUser, TransactionType.INCOME, startDate, endDate);
+
+        LocalDate prevStartDate = startDate.minusMonths(endDate.toEpochDay() - startDate.toEpochDay() + 1);
+        LocalDate prevEndDate = startDate.minusMonths(1);
+
+        BigDecimal percentageChange = calculatePercentageChange(currentUser.getId(), TransactionType.EXPENSE,
+                startDate, endDate, prevStartDate, prevEndDate);
+
         BigDecimal netBalance = totalIncome.subtract(totalExpenses);
 
         BigDecimal totalBalance = transactionRepository.calculateTotalBalance(currentUser);
@@ -69,6 +81,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .totalExpenses(totalExpenses)
                 .netBalance(netBalance)
                 .totalBalance(totalBalance)
+                .expansiveTransactionsCount(countExpensesTransactions)
+                .incomeTransactionsCount(countIncomeTransactions)
+                .differenceFromPreviousPeriod(percentageChange)
                 .savingsRate(savingsRate)
                 .periodStart(startDate)
                 .periodEnd(endDate)
@@ -288,5 +303,33 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 });
 
         return insights;
+    }
+
+    public BigDecimal calculatePercentageChange(
+            Long userId,
+            TransactionType type,
+            LocalDate startDate,
+            LocalDate endDate,
+            LocalDate prevStartDate,
+            LocalDate prevEndDate) {
+
+        BigDecimal currentPeriod = transactionRepository.calculatePeriodSum(
+                userId, type, startDate, endDate);
+
+        BigDecimal previousPeriod = transactionRepository.calculatePeriodSum(
+                userId, type, prevStartDate, prevEndDate);
+
+        if (previousPeriod.compareTo(BigDecimal.ZERO) == 0) {
+            return currentPeriod.compareTo(BigDecimal.ZERO) == 0
+                    ? BigDecimal.ZERO
+                    : new BigDecimal("100");
+        }
+
+        BigDecimal difference = currentPeriod.subtract(previousPeriod);
+
+        return difference
+                .divide(previousPeriod.abs(), 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }

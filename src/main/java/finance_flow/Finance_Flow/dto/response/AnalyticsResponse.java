@@ -31,6 +31,9 @@ public class AnalyticsResponse {
         private BigDecimal netBalance;
         private BigDecimal totalBalance;
         private BigDecimal savingsRate;
+        private Integer expansiveTransactionsCount;
+        private Integer incomeTransactionsCount;
+        private BigDecimal differenceFromPreviousPeriod;
         private LocalDate periodStart;
         private LocalDate periodEnd;
     }

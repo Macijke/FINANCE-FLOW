@@ -50,6 +50,27 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("endDate") LocalDate endDate
     );
 
+    @Query("SELECT COUNT(t) FROM Transaction t " +
+            "WHERE t.user = :user " +
+            "AND t.type = :type " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate")
+    Integer countByUserAndTypeAndTransactionDateBetween(
+            User user,
+            TransactionType type,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.user.id = :userId AND t.type = :type " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate")
+    BigDecimal calculatePeriodSum(
+            Long userId,
+            TransactionType type,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
             "WHERE t.category.id = :id " +
             "AND t.type = :transactionType " +
