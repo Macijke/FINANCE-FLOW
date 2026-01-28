@@ -266,7 +266,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             AnalyticsResponse.CategoryBreakdown topCategory = categories.get(0);
             insights.add(AnalyticsResponse.SpendingInsight.builder()
                     .type("TOP_CATEGORY")
-                    .message(String.format("Najwięcej wydajesz na: %s (%.2f%%)",
+                    .message(String.format("Top spending: %s (%.2f%%)",
                             topCategory.getCategoryName(),
                             topCategory.getPercentage()))
                     .severity("INFO")
@@ -286,8 +286,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     String severity = "EXCEEDED".equals(status.getStatus())
                             ? "CRITICAL" : "WARNING";
                     String message = "EXCEEDED".equals(status.getStatus())
-                            ? String.format("Przekroczono budżet dla: %s", status.getCategoryName())
-                            : String.format("Uwaga! Zbliżasz się do limitu w kategorii: %s",
+                            ? String.format("Budget exceeded for: %s", status.getCategoryName())
+                            : String.format("Warning! Close to budget: %s",
                             status.getCategoryName());
 
                     insights.add(AnalyticsResponse.SpendingInsight.builder()

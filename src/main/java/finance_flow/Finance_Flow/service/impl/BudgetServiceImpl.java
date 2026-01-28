@@ -111,9 +111,9 @@ public class BudgetServiceImpl implements BudgetService {
     public void deleteBudget(Long id) {
         User currentUser = SecurityUtils.getCurrentUser();
         Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Budżet nie istnieje"));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not exists"));
         if (!Objects.equals(budget.getUser().getId(), currentUser.getId())) {
-            throw new ResourceNotFoundException("Budżet nie istnieje");
+            throw new ResourceNotFoundException("Budget not exists");
         }
         budgetRepository.delete(budget);
     }
@@ -123,9 +123,9 @@ public class BudgetServiceImpl implements BudgetService {
     public BudgetResponse getBudgetById(Long id) {
         User currentUser = SecurityUtils.getCurrentUser();
         Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Budżet nie istnieje"));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not exists"));
         if (!Objects.equals(budget.getUser().getId(), currentUser.getId())) {
-            throw new ResourceNotFoundException("Budżet nie istnieje");
+            throw new ResourceNotFoundException("Budget not exists");
         }
 
         return mapToResponse(budget);
@@ -154,7 +154,7 @@ public class BudgetServiceImpl implements BudgetService {
     public BudgetResponse checkBudgetStatus(Long id) {
         User currentUser = SecurityUtils.getCurrentUser();
         Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Budżet nie istnieje"));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not exists"));
         BudgetResponse response = mapToResponse(budget);
 
         if (response.getSpentAmount().compareTo(response.getLimitAmount()) > 0) {

@@ -3,7 +3,6 @@ package finance_flow.Finance_Flow.controller;
 import finance_flow.Finance_Flow.dto.request.UpdateProfilePictureRequest;
 import finance_flow.Finance_Flow.dto.response.ApiResponse;
 import finance_flow.Finance_Flow.dto.response.UserResponse;
-import finance_flow.Finance_Flow.security.UserPrincipal;
 import finance_flow.Finance_Flow.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

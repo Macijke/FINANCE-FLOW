@@ -9,6 +9,4 @@ public interface AuthService {
     AuthResponse login(LoginRequest request);
     AuthResponse register(RegisterRequest request);
     void changePassword(ChangePasswordRequest request);
-    //void logout();
-    //AuthResponse refreshToken(String token);
 }

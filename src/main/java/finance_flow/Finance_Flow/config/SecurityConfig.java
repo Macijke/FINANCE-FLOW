@@ -28,7 +28,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
-        prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true
 )
@@ -59,9 +58,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(401, "Unauthorized");
-                        })
+                        .authenticationEntryPoint((request, response, authException) -> response.sendError(401, "Unauthorized"))
                 ).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).authorizeHttpRequests(authz -> authz
