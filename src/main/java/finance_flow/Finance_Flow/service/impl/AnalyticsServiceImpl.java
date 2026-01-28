@@ -55,6 +55,12 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         BigDecimal totalExpenses = transactionRepository.sumByUserAndTypeAndDateRange(
                 userId, TransactionType.EXPENSE, startDate, endDate);
 
+        BigDecimal averageExpenses = transactionRepository.averageByUserAndTypeAndDateRange(
+                userId, TransactionType.EXPENSE, startDate, endDate).setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal averageIncome = transactionRepository.averageByUserAndTypeAndDateRange(
+                userId, TransactionType.INCOME, startDate, endDate).setScale(2, RoundingMode.HALF_UP);
+
         Integer countExpensesTransactions = transactionRepository.countByUserAndTypeAndTransactionDateBetween(
                 currentUser, TransactionType.EXPENSE, startDate, endDate);
 
@@ -78,7 +84,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         return AnalyticsResponse.FinancialSummary.builder()
                 .totalIncome(totalIncome)
+                .averageIncome(averageIncome)
                 .totalExpenses(totalExpenses)
+                .averageExpenses(averageExpenses)
                 .netBalance(netBalance)
                 .totalBalance(totalBalance)
                 .expansiveTransactionsCount(countExpensesTransactions)
@@ -266,14 +274,12 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             AnalyticsResponse.CategoryBreakdown topCategory = categories.get(0);
             insights.add(AnalyticsResponse.SpendingInsight.builder()
                     .type("TOP_CATEGORY")
-                    .message(String.format("Top spending: %s (%.2f%%)",
-                            topCategory.getCategoryName(),
-                            topCategory.getPercentage()))
                     .severity("INFO")
                     .metadata(Map.of(
                             "categoryId", topCategory.getCategoryId(),
                             "amount", topCategory.getAmount(),
-                            "percentage", topCategory.getPercentage()
+                            "percentage", topCategory.getPercentage(),
+                            "categoryName", topCategory.getCategoryName()
                     ))
                     .build());
         }

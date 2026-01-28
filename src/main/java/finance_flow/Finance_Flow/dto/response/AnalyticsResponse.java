@@ -27,7 +27,9 @@ public class AnalyticsResponse {
     @AllArgsConstructor
     public static class FinancialSummary {
         private BigDecimal totalIncome;
+        private BigDecimal averageIncome;
         private BigDecimal totalExpenses;
+        private BigDecimal averageExpenses;
         private BigDecimal netBalance;
         private BigDecimal totalBalance;
         private BigDecimal savingsRate;

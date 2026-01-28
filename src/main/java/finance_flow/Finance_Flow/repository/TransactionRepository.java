@@ -146,4 +146,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE t.user = :user")
     BigDecimal calculateTotalBalance(User user);
 
+    @Query("SELECT COALESCE(AVG(t.amount), 0) FROM Transaction t " +
+            "WHERE t.user.id = :userId AND t.type = :transactionType " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate")
+    BigDecimal averageByUserAndTypeAndDateRange(Long userId, TransactionType transactionType, LocalDate startDate, LocalDate endDate);
 }
