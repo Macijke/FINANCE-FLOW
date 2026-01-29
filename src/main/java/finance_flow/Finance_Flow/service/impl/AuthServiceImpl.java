@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -83,17 +84,26 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void changePassword(ChangePasswordRequest request) {
-        User currentUser = SecurityUtils.getCurrentUser();
-        User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = SecurityUtils.getCurrentUser();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new BadRequestException("Current password is incorrect");
+            log.warn("Change password failed: Incorrect current password for user {}", user.getEmail());
+            throw new UnauthorizedException("Current password is incorrect");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            log.warn("Change password failed: New password and confirmation do not match for user {}", user.getEmail());
+            throw new BadRequestException("New password and confirmation do not match");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            log.warn("Change password failed: New password cannot be the same as the current password for user {}", user.getEmail());
+            throw new BadRequestException("New password cannot be the same as the current password");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setPasswordChangedAt(LocalDateTime.now());
         userRepository.save(user);
+        log.info("Password changed successfully for user {}", user.getEmail());
     }
 
 
