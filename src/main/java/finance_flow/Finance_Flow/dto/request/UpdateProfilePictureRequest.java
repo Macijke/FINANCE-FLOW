@@ -1,8 +1,10 @@
 package finance_flow.Finance_Flow.dto.request;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-public class UpdateProfilePictureRequest {
-    private String profilePictureUrl;
+public record UpdateProfilePictureRequest(
+        @NotBlank(message = "Profile picture URL cannot be blank")
+        String profilePictureUrl
+) {
+
 }

@@ -4,15 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-@Data
-public class ChangePasswordRequest {
-    @NotBlank(message = "Current password is required")
-    private String currentPassword;
+public record ChangePasswordRequest(
+        @NotBlank(message = "Current password is required")
+        String currentPassword,
 
-    @NotBlank(message = "New password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    private String newPassword;
+        @NotBlank(message = "New password is required")
+        @Size(min = 8, message = "Password must be at least 8 characters")
+        String newPassword,
 
-    @NotBlank(message = "Confirm new password is required")
-    private String confirmNewPassword;
+        @NotBlank(message = "Confirm new password is required")
+        String confirmNewPassword
+) {
 }

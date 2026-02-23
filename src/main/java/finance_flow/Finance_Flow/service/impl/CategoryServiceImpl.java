@@ -31,24 +31,24 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse createCategory(CategoryRequest request) {
         User currentUser = SecurityUtils.getCurrentUser();
         boolean exists = categoryRepository.existsByUserAndNameAndType(
-                currentUser, request.getName(), request.getType()
+                currentUser, request.name(), request.type()
         );
         if (exists) {
             log.warn("Category with name '{}' and type '{}' already exists for user '{}'",
-                    request.getName(), request.getType(), currentUser.getEmail());
+                    request.name(), request.type(), currentUser.getEmail());
             throw new BadRequestException("Category with the same name and type already exists.");
         }
 
         Category category = Category.builder()
                 .user(currentUser)
-                .name(request.getName())
-                .type(request.getType())
-                .color(request.getColor())
-                .icon(request.getIcon())
-                .description(request.getDescription())
+                .name(request.name())
+                .type(request.type())
+                .color(request.color())
+                .icon(request.icon())
+                .description(request.description())
                 .isDefault(false)
                 .isActive(true)
-                .displayOrder(request.getDisplayOrder() != null ? request.getDisplayOrder() : 0)
+                .displayOrder(request.displayOrder() != null ? request.displayOrder() : 0)
                 .build();
 
         Category saved = categoryRepository.save(category);
@@ -66,13 +66,13 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
-        if (!category.getName().equals(request.getName()) ||
-                !category.getType().equals(request.getType())) {
+        if (!category.getName().equals(request.name()) ||
+                !category.getType().equals(request.type())) {
 
             boolean exists = categoryRepository.existsByUserAndNameAndType(
                     currentUser,
-                    request.getName(),
-                    request.getType()
+                    request.name(),
+                    request.type()
             );
 
             if (exists) {
@@ -80,12 +80,12 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
 
-        category.setName(request.getName());
-        category.setType(request.getType());
-        category.setColor(request.getColor());
-        category.setIcon(request.getIcon());
-        category.setDescription(request.getDescription());
-        category.setDisplayOrder(request.getDisplayOrder() != null ? request.getDisplayOrder() : 0);
+        category.setName(request.name());
+        category.setType(request.type());
+        category.setColor(request.color());
+        category.setIcon(request.icon());
+        category.setDescription(request.description());
+        category.setDisplayOrder(request.displayOrder() != null ? request.displayOrder() : 0);
         Category updated = categoryRepository.save(category);
 
         log.info("Category updated successfully");

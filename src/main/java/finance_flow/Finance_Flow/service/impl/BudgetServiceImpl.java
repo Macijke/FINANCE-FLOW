@@ -44,21 +44,21 @@ public class BudgetServiceImpl implements BudgetService {
         User currentUser = SecurityUtils.getCurrentUser();
 
         Category category = null;
-        if (request.getCategoryId() != null) {
-            category = categoryRepository.findByIdAndUser(request.getCategoryId(), currentUser)
+        if (request.categoryId() != null) {
+            category = categoryRepository.findByIdAndUser(request.categoryId(), currentUser)
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         }
 
-        if (budgetRepository.existsByUserAndCategoryAndMonth(currentUser, category, request.getMonth())) {
+        if (budgetRepository.existsByUserAndCategoryAndMonth(currentUser, category, request.month())) {
             throw new BadRequestException("Budget already exists for this category and month");
         }
 
         Budget budget = Budget.builder()
                 .user(currentUser)
                 .category(category)
-                .limitAmount(request.getLimitAmount())
-                .month(request.getMonth())
-                .alertEnabled(request.getAlertEnabled() != null ? request.getAlertEnabled() : true)
+                .limitAmount(request.limitAmount())
+                .month(request.month())
+                .alertEnabled(request.alertEnabled() != null ? request.alertEnabled() : true)
                 .build();
 
         Budget savedBudget = budgetRepository.save(budget);
@@ -78,25 +78,25 @@ public class BudgetServiceImpl implements BudgetService {
                 .orElseThrow(() -> new ResourceNotFoundException("Budget not found"));
 
         Category category = null;
-        if (request.getCategoryId() != null) {
-            category = categoryRepository.findByIdAndUser(request.getCategoryId(), currentUser)
+        if (request.categoryId() != null) {
+            category = categoryRepository.findByIdAndUser(request.categoryId(), currentUser)
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         }
 
         if (!Objects.equals(budget.getCategory(), category) ||
-                !Objects.equals(budget.getMonth(), request.getMonth())) {
+                !Objects.equals(budget.getMonth(), request.month())) {
 
             boolean exists = budgetRepository.existsByUserAndCategoryAndMonth(
-                    currentUser, category, request.getMonth());
+                    currentUser, category, request.month());
 
             if (exists) {
                 throw new BadRequestException("Budget already exists for this category and month");
             }
         }
 
-        budget.setMonth(request.getMonth());
-        budget.setLimitAmount(request.getLimitAmount());
-        budget.setAlertEnabled(request.getAlertEnabled());
+        budget.setMonth(request.month());
+        budget.setLimitAmount(request.limitAmount());
+        budget.setAlertEnabled(request.alertEnabled());
         budget.setCategory(category);
 
         Budget updatedBudget = budgetRepository.save(budget);

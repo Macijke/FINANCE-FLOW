@@ -37,9 +37,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
+        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new UnauthorizedException("Invalid email or password");
         }
 
@@ -58,17 +58,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            log.warn("Registration failed: Email already in use - {}", request.getEmail());
+        if (userRepository.existsByEmail(request.email())) {
+            log.warn("Registration failed: Email already in use - {}", request.email());
             throw new BadRequestException("Email already in use");
         }
 
         User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .defaultCurrency(request.getDefaultCurrency() != null ? request.getDefaultCurrency() : "USD")
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .defaultCurrency(request.defaultCurrency())
                 .role(Role.USER)
                 .isActive(true)
                 .emailVerified(false)
@@ -86,21 +86,21 @@ public class AuthServiceImpl implements AuthService {
     public void changePassword(ChangePasswordRequest request) {
         User user = SecurityUtils.getCurrentUser();
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
             log.warn("Change password failed: Incorrect current password for user {}", user.getEmail());
             throw new UnauthorizedException("Current password is incorrect");
         }
-        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+        if (!request.newPassword().equals(request.confirmNewPassword())) {
             log.warn("Change password failed: New password and confirmation do not match for user {}", user.getEmail());
             throw new BadRequestException("New password and confirmation do not match");
         }
 
-        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(request.newPassword(), user.getPassword())) {
             log.warn("Change password failed: New password cannot be the same as the current password for user {}", user.getEmail());
             throw new BadRequestException("New password cannot be the same as the current password");
         }
 
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
         user.setPasswordChangedAt(LocalDateTime.now());
         userRepository.save(user);
         log.info("Password changed successfully for user {}", user.getEmail());

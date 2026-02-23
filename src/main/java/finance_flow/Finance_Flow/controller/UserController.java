@@ -32,7 +32,7 @@ public class UserController {
     @PutMapping("/profile-picture")
     public ResponseEntity<ApiResponse<UserResponse>> updateProfilePicture(@Valid @RequestBody UpdateProfilePictureRequest request) {
 
-        UserResponse userResponse = userService.updateProfilePicture(request.getProfilePictureUrl());
+        UserResponse userResponse = userService.updateProfilePicture(request.profilePictureUrl());
 
         return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
                 .success(true)

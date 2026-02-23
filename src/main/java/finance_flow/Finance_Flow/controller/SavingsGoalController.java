@@ -117,7 +117,7 @@ public class SavingsGoalController {
             @PathVariable Long id,
             @Valid @RequestBody ContributeRequest request
     ) {
-        SavingsGoalResponse response = savingsGoalService.contributeToGoal(id, request.getAmount());
+        SavingsGoalResponse response = savingsGoalService.contributeToGoal(id, request.amount());
 
         return ResponseEntity.ok(
                 ApiResponse.<SavingsGoalResponse>builder()

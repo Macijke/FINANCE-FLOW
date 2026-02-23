@@ -28,19 +28,19 @@ public class SavingGoalServiceImpl implements SavingsGoalService {
     @Override
     @Transactional
     public SavingsGoalResponse createGoal(SavingsGoalRequest request) {
-        log.info("Creating new savings goal: {}", request.getName());
+        log.info("Creating new savings goal: {}", request.name());
 
         User currentUser = SecurityUtils.getCurrentUser();
 
         SavingsGoal savingsGoal = SavingsGoal.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .targetAmount(request.getTargetAmount())
+                .name(request.name())
+                .description(request.description())
+                .targetAmount(request.targetAmount())
                 .currentAmount(BigDecimal.ZERO)
-                .targetDate(request.getTargetDate())
+                .targetDate(request.targetDate())
                 .status(GoalStatus.ACTIVE)
-                .icon(request.getIcon() != null ? request.getIcon() : "🎯")
-                .color(request.getColor() != null ? request.getColor() : "#3B82F6")
+                .icon(request.icon())
+                .color(request.color())
                 .isActive(true)
                 .user(currentUser)
                 .build();
@@ -61,16 +61,16 @@ public class SavingGoalServiceImpl implements SavingsGoalService {
         SavingsGoal savingsGoal = savingsGoalRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Savings Goal not found"));
 
-        savingsGoal.setName(request.getName());
-        savingsGoal.setDescription(request.getDescription());
-        savingsGoal.setTargetAmount(request.getTargetAmount());
-        savingsGoal.setTargetDate(request.getTargetDate());
+        savingsGoal.setName(request.name());
+        savingsGoal.setDescription(request.description());
+        savingsGoal.setTargetAmount(request.targetAmount());
+        savingsGoal.setTargetDate(request.targetDate());
 
-        if (request.getIcon() != null) {
-            savingsGoal.setIcon(request.getIcon());
+        if (request.icon() != null) {
+            savingsGoal.setIcon(request.icon());
         }
-        if (request.getColor() != null) {
-            savingsGoal.setColor(request.getColor());
+        if (request.color() != null) {
+            savingsGoal.setColor(request.color());
         }
 
         SavingsGoal updatedGoal = savingsGoalRepository.save(savingsGoal);

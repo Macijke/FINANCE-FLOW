@@ -39,16 +39,16 @@ public class TransactionServiceImpl implements TransactionService {
         User currentUser = SecurityUtils.getCurrentUser();
 
         Category category = null;
-        if (request.getCategoryId() != null) {
-            category = categoryRepository.findByIdAndUser(request.getCategoryId(), currentUser)
+        if (request.categoryId() != null) {
+            category = categoryRepository.findByIdAndUser(request.categoryId(), currentUser)
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         }
 
         Transaction transaction = Transaction.builder()
-                .amount(request.getAmount())
-                .type(request.getType())
-                .description(request.getDescription())
-                .transactionDate(request.getTransactionDate())
+                .amount(request.amount())
+                .type(request.type())
+                .description(request.description())
+                .transactionDate(request.transactionDate())
                 .user(currentUser)
                 .category(category)
                 .build();
@@ -69,10 +69,10 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setAmount(request.getAmount());
-        transaction.setType(request.getType());
-        transaction.setDescription(request.getDescription());
+        transaction.setTransactionDate(request.transactionDate());
+        transaction.setAmount(request.amount());
+        transaction.setType(request.type());
+        transaction.setDescription(request.description());
         Transaction updatedTransaction = transactionRepository.save(transaction);
         return mapToResponse(updatedTransaction);
     }
