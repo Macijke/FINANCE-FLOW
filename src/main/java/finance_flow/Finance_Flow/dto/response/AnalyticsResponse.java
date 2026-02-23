@@ -1,109 +1,93 @@
 package finance_flow.Finance_Flow.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AnalyticsResponse {
-    private FinancialSummary summary;
-    private List<CategoryBreakdown> categoryBreakdowns;
-    private List<MonthlyTrend> monthlyTrends;
-    private BudgetOverview budgetOverview;
-    private List<SpendingInsight> insights;
-
-    @Data
+public record AnalyticsResponse(
+        FinancialSummary summary,
+        List<CategoryBreakdown> categoryBreakdowns,
+        List<MonthlyTrend> monthlyTrends,
+        BudgetOverview budgetOverview,
+        List<SpendingInsight> insights
+) {
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FinancialSummary {
-        private BigDecimal totalIncome;
-        private BigDecimal averageIncome;
-        private BigDecimal totalExpenses;
-        private BigDecimal averageExpenses;
-        private BigDecimal netBalance;
-        private BigDecimal totalBalance;
-        private BigDecimal savingsRate;
-        private Integer expansiveTransactionsCount;
-        private Integer incomeTransactionsCount;
-        private BigDecimal differenceFromPreviousPeriod;
-        private LocalDate periodStart;
-        private LocalDate periodEnd;
+    public record FinancialSummary(
+            BigDecimal totalIncome,
+            BigDecimal averageIncome,
+            BigDecimal totalExpenses,
+            BigDecimal averageExpenses,
+            BigDecimal netBalance,
+            BigDecimal totalBalance,
+            BigDecimal savingsRate,
+            Integer expansiveTransactionsCount,
+            Integer incomeTransactionsCount,
+            BigDecimal differenceFromPreviousPeriod,
+            LocalDate periodStart,
+            LocalDate periodEnd
+    ) {
+
     }
 
-    @Data
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CategoryBreakdown {
-        private Long categoryId;
-        private String categoryName;
-        private String categoryIcon;
-        private String categoryColor;
-        private BigDecimal amount;
-        private BigDecimal percentage;
-        private Integer transactionCount;
+    public record CategoryBreakdown(
+            Long categoryId,
+            String categoryName,
+            String categoryIcon,
+            String categoryColor,
+            BigDecimal amount,
+            BigDecimal percentage,
+            Integer transactionCount
+    ) {
+
     }
 
-    @Data
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MonthlyTrend {
-        private String month;
-        private BigDecimal income;
-        private BigDecimal expenses;
-        private BigDecimal balance;
+    public record MonthlyTrend(
+            String month,
+            BigDecimal income,
+            BigDecimal expenses,
+            BigDecimal balance
+    ) {
+
     }
 
-    @Data
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BudgetOverview {
-        private BigDecimal totalBudget;
-        private BigDecimal totalSpent;
-        private BigDecimal remaining;
-        private BigDecimal utilizationRate;
-        private List<BudgetStatus> budgetStatuses;
+    public record BudgetOverview(
+            BigDecimal totalBudget,
+            BigDecimal totalSpent,
+            BigDecimal remaining,
+            BigDecimal utilizationRate,
+            List<BudgetStatus> budgetStatuses
+    ) {
+
     }
 
-    @Data
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BudgetStatus {
-        private Long budgetId;
-        private Long categoryId;
-        private String categoryName;
-        private BigDecimal budgetLimit;
-        private BigDecimal spent;
-        private BigDecimal remaining;
-        private BigDecimal utilizationRate;
-        private String status;
+    public record BudgetStatus(
+            Long budgetId,
+            Long categoryId,
+            String categoryName,
+            BigDecimal budgetLimit,
+            BigDecimal spent,
+            BigDecimal remaining,
+            BigDecimal utilizationRate,
+            String status
+    ) {
+
     }
 
-    @Data
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SpendingInsight {
-        private String type;
-        private String message;
-        private String severity;
-        private Map<String, Object> metadata;
+    public record SpendingInsight(
+            String type,
+            String message,
+            String severity,
+            Map<String, Object> metadata
+    ) {
+
     }
-
-
 }
-
-

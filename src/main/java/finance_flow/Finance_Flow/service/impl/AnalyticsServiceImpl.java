@@ -136,7 +136,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                             .transactionCount(transactionCount.intValue())
                             .build();
                 })
-                .sorted(Comparator.comparing(AnalyticsResponse.CategoryBreakdown::getAmount).reversed())
+                .sorted(Comparator.comparing(AnalyticsResponse.CategoryBreakdown::amount).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -148,33 +148,37 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<Object[]> trends = transactionRepository.getMonthlyTrends(
                 userId, startDate, endDate);
 
-        Map<String, AnalyticsResponse.MonthlyTrend> trendMap = new HashMap<>();
+        Map<String, BigDecimal> incomeMap = new HashMap<>();
+        Map<String, BigDecimal> expensesMap = new HashMap<>();
 
         for (Object[] row : trends) {
             String month = (String) row[0];
             TransactionType type = (TransactionType) row[1];
             BigDecimal amount = (BigDecimal) row[2];
 
-            AnalyticsResponse.MonthlyTrend trend = trendMap.computeIfAbsent(month,
-                    m -> AnalyticsResponse.MonthlyTrend.builder()
-                            .month(m)
-                            .income(BigDecimal.ZERO)
-                            .expenses(BigDecimal.ZERO)
-                            .balance(BigDecimal.ZERO)
-                            .build());
-
             if (type == TransactionType.INCOME) {
-                trend.setIncome(amount);
+                incomeMap.merge(month, amount, BigDecimal::add);
             } else {
-                trend.setExpenses(amount);
+                expensesMap.merge(month, amount, BigDecimal::add);
             }
         }
 
-        trendMap.values().forEach(trend ->
-                trend.setBalance(trend.getIncome().subtract(trend.getExpenses())));
+        Set<String> allMonths = new HashSet<>();
+        allMonths.addAll(incomeMap.keySet());
+        allMonths.addAll(expensesMap.keySet());
 
-        return trendMap.values().stream()
-                .sorted(Comparator.comparing(AnalyticsResponse.MonthlyTrend::getMonth))
+        return allMonths.stream()
+                .sorted()
+                .map(month -> {
+                    BigDecimal income = incomeMap.getOrDefault(month, BigDecimal.ZERO);
+                    BigDecimal expenses = expensesMap.getOrDefault(month, BigDecimal.ZERO);
+                    return AnalyticsResponse.MonthlyTrend.builder()
+                            .month(month)
+                            .income(income)
+                            .expenses(expenses)
+                            .balance(income.subtract(expenses))
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -276,34 +280,34 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     .type("TOP_CATEGORY")
                     .severity("INFO")
                     .metadata(Map.of(
-                            "categoryId", topCategory.getCategoryId(),
-                            "amount", topCategory.getAmount(),
-                            "percentage", topCategory.getPercentage(),
-                            "categoryName", topCategory.getCategoryName()
+                            "categoryId", topCategory.categoryId(),
+                            "amount", topCategory.amount(),
+                            "percentage", topCategory.percentage(),
+                            "categoryName", topCategory.categoryName()
                     ))
                     .build());
         }
 
         AnalyticsResponse.BudgetOverview budgetOverview = buildBudgetOverview(LocalDate.now());
-        budgetOverview.getBudgetStatuses().stream()
-                .filter(status -> "EXCEEDED".equals(status.getStatus()) ||
-                        "WARNING".equals(status.getStatus()))
+        budgetOverview.budgetStatuses().stream()
+                .filter(status -> "EXCEEDED".equals(status.status()) ||
+                        "WARNING".equals(status.status()))
                 .forEach(status -> {
-                    String severity = "EXCEEDED".equals(status.getStatus())
+                    String severity = "EXCEEDED".equals(status.status())
                             ? "CRITICAL" : "WARNING";
-                    String message = "EXCEEDED".equals(status.getStatus())
-                            ? String.format("Budget exceeded for: %s", status.getCategoryName())
+                    String message = "EXCEEDED".equals(status.status())
+                            ? String.format("Budget exceeded for: %s", status.categoryName())
                             : String.format("Warning! Close to budget: %s",
-                            status.getCategoryName());
+                            status.categoryName());
 
                     insights.add(AnalyticsResponse.SpendingInsight.builder()
                             .type("BUDGET_ALERT")
                             .message(message)
                             .severity(severity)
                             .metadata(Map.of(
-                                    "budgetId", status.getBudgetId(),
-                                    "categoryId", status.getCategoryId(),
-                                    "utilizationRate", status.getUtilizationRate()
+                                    "budgetId", status.budgetId(),
+                                    "categoryId", status.categoryId(),
+                                    "utilizationRate", status.utilizationRate()
                             ))
                             .build());
                 });

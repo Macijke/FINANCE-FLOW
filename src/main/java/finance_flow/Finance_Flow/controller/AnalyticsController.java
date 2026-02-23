@@ -64,7 +64,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(ApiResponse.<AnalyticsResponse.FinancialSummary>builder()
                 .success(true)
                 .message("Financial summary retrieved successfully")
-                .data(analytics.getSummary())
+                .data(analytics.summary())
                 .build());
     }
 
@@ -80,7 +80,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(ApiResponse.<List<AnalyticsResponse.MonthlyTrend>>builder()
                 .success(true)
                 .message("Monthly trends retrieved successfully")
-                .data(analytics.getMonthlyTrends())
+                .data(analytics.monthlyTrends())
                 .build());
     }
 
@@ -99,7 +99,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(ApiResponse.<List<AnalyticsResponse.CategoryBreakdown>>builder()
                 .success(true)
                 .message("Category breakdown retrieved successfully")
-                .data(analytics.getCategoryBreakdowns())
+                .data(analytics.categoryBreakdowns())
                 .build());
     }
 }

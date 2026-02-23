@@ -1,30 +1,25 @@
 package finance_flow.Finance_Flow.dto.response;
 
 import finance_flow.Finance_Flow.model.enums.TransactionType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class TransactionResponse {
+public record TransactionResponse(
+        Long id,
+        String categoryName,
+        String categoryColor,
+        BigDecimal amount,
+        TransactionType type,
+        String description,
+        Long categoryId,
+        String categoryIcon,
+        LocalDate transactionDate,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {
 
-    private Long id;
-    private String categoryName;
-    private String categoryColor;
-    private BigDecimal amount;
-    private TransactionType type;
-    private String description;
-    private Long categoryId;
-    private String categoryIcon;
-    private LocalDate transactionDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

@@ -152,18 +152,17 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     @Transactional(readOnly = true)
     public BudgetResponse checkBudgetStatus(Long id) {
-        User currentUser = SecurityUtils.getCurrentUser();
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget not exists"));
         BudgetResponse response = mapToResponse(budget);
 
-        if (response.getSpentAmount().compareTo(response.getLimitAmount()) > 0) {
+        if (response.spentAmount().compareTo(response.limitAmount()) > 0) {
             log.warn("Budget {} exceeded! Spent: {}, Limit: {}",
-                    id, response.getSpentAmount(), response.getLimitAmount());
+                    id, response.spentAmount(), response.limitAmount());
         }
 
-        if (response.getPercentageUsed() >= 90 && response.getPercentageUsed() < 100) {
-            log.info("Budget {} is almost reached ({}%)", id, response.getPercentageUsed());
+        if (response.percentageUsed() >= 90 && response.percentageUsed() < 100) {
+            log.info("Budget {} is almost reached ({}%)", id, response.percentageUsed());
         }
 
         return response;
